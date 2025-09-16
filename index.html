@@ -5,23 +5,39 @@
   <title>MindAR Видео</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image-aframe.prod.js"></script>
+  <style>
+    #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+      background:#111;color:#fff;font:16px/1.4 system-ui}
+    #btn{padding:12px 18px;border:0;border-radius:8px;background:#06f;color:#fff;font-weight:700}
+  </style>
 </head>
 <body style="margin:0;overflow:hidden;">
-  <a-scene
-    mindar-image="imageTargetSrc: targets.mind"
-    embedded
-    vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false">
+  <div id="overlay">
+    <div>
+      <div style="margin-bottom:12px">Нажми «Запустить AR» и разреши камеру</div>
+      <button id="btn">Запустить AR</button>
+    </div>
+  </div>
+
+  <a-scene id="scene"
+    mindar-image="imageTargetSrc: targets.mind; autoStart: false"
+    embedded vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
     <a-assets>
       <video id="vid" src="assets/students.mp4" autoplay loop muted playsinline webkit-playsinline crossorigin="anonymous"></video>
     </a-assets>
-
     <a-camera look-controls="enabled:false" position="0 0 0"></a-camera>
-
-    <!-- Контент, привязанный к цели №0 -->
     <a-entity mindar-image-target="targetIndex: 0">
       <a-video src="#vid" width="1" height="0.56" position="0 0 0"></a-video>
     </a-entity>
   </a-scene>
+
+  <script>
+    document.getElementById('btn').addEventListener('click', async () => {
+      try { await navigator.mediaDevices.getUserMedia({video:true}); } catch(e) {}
+      const scene = document.getElementById('scene');
+      await scene.systems['mindar-image-system'].start(); // запуск сканера
+      document.getElementById('overlay').style.display = 'none';
+    });
+  </script>
 </body>
 </html>
