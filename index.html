@@ -2,33 +2,42 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MindAR test</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image-aframe.prod.js"></script>
   <style>
-    #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#111;color:#fff}
-    #btn{padding:12px 18px;border:0;border-radius:8px;background:#06f;color:#fff;font-weight:700}
+    #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+      background:#111;color:#fff;z-index:9999}
+    #btn{padding:12px 18px;border:0;border-radius:10px;background:#06f;color:#fff;font-weight:700}
   </style>
 </head>
 <body style="margin:0;overflow:hidden;">
-  <div id="overlay"><button id="btn">Запустить AR</button></div>
+  <div id="overlay"><button id="btn" onclick="startAR()">Запустить AR</button></div>
 
   <a-scene id="scene"
-    mindar-image="imageTargetSrc: https://raw.githubusercontent.com/hiukim/mind-ar-js-doc/master/examples/image-tracking/assets/targets.mind; autoStart:false"
-    embedded vr-mode-ui="enabled:false" device-orientation-permission-ui="enabled:false">
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart:false"
+    embedded vr-mode-ui="enabled:false">
     <a-camera look-controls="enabled:false" position="0 0 0"></a-camera>
     <a-entity mindar-image-target="targetIndex: 0">
-      <a-box position="0 0 0" depth="0.1" height="0.1" width="0.1" color="#FF0000"></a-box>
+      <a-box position="0 0 0" depth="0.1" height="0.1" width="0.1" color="#F00"></a-box>
     </a-entity>
   </a-scene>
 
   <script>
-    document.getElementById('btn').addEventListener('click', async () => {
+    async function waitSceneLoaded(sc){
+      if (sc.hasLoaded) return;
+      await new Promise(r => sc.addEventListener('loaded', r, {once:true}));
+    }
+    async function startAR(){
+      const scene = document.getElementById('scene');
+      await waitSceneLoaded(scene);
       try { await navigator.mediaDevices.getUserMedia({video:true}); } catch(e) {}
-      await document.getElementById('scene').systems['mindar-image-system'].start();
-      document.getElementById('overlay').style.display='none';
-    });
+      await scene.systems['mindar-image-system'].start();
+      document.getElementById('overlay').style.display = 'none';
+    }
   </script>
 </body>
 </html>
+
 
