@@ -4,22 +4,23 @@
     <meta charset="utf-8">
     <title>WebAR Видео</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.1/aframe/build/aframe-ar.js"></script>
+    <!-- Нормальный CDN для AR.js -->
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.3.2/aframe/build/aframe-ar.js"></script>
   </head>
   <body style="margin:0; overflow:hidden;">
     <a-scene embedded arjs>
+      <!-- Предзагрузка видео как <video>; важны muted и playsinline -->
+      <a-assets timeout="10000">
+        <video id="vid" src="assets/students.mp4"
+               autoplay loop muted playsinline webkit-playsinline crossorigin="anonymous">
+        </video>
+      </a-assets>
+
       <a-marker preset="hiro">
-        <!-- Видео студентов -->
-        <a-video
-          src="assets/students.mp4"
-          width="3"
-          height="1.7"
-          position="0 1 0"
-          autoplay="true"
-          loop="true"
-          muted="true">
-        </a-video>
+        <!-- Полотно с видео -->
+        <a-video src="#vid" width="3" height="1.7" position="0 1 0"></a-video>
       </a-marker>
+
       <a-entity camera></a-entity>
     </a-scene>
   </body>
